@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+
+  catalog-db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: catalog
+    volumes:
+      - ./catalog-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  catalog-service:
+    build: ./catalog-service
+    depends_on: [catalog-db]
+    environment:
+      DB_HOST: catalog-db
+      DB_NAME: catalog
+    ports:
+      - "3001:3001"
+
+  inventory-db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: inventory
+    volumes:
+      - ./inventory-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  inventory-service:
+    build: ./inventory-service
+    depends_on: [inventory-db]
+    environment:
+      DB_HOST: inventory-db
+      DB_NAME: inventory
+    ports:
+      - "3002:3002"
+
+  order-db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: orders
+    volumes:
+      - ./order-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  order-service:
+    build: ./order-service
+    depends_on: [order-db]
+    environment:
+      DB_HOST: order-db
+      DB_NAME: orders
+    ports:
+      - "3003:3003"
+
+  payment-db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: payments
+    volumes:
+      - ./payment-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  payment-service:
+    build: ./payment-service
+    depends_on: [payment-db]
+    environment:
+      DB_HOST: payment-db
+      DB_NAME: payments
+    ports:
+      - "3004:3004"
